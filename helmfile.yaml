@@ -1,0 +1,23 @@
+environments:
+  default:
+    values:
+      - grafana:
+          enabled: {{ .Values | get "grafana.enabled" true }}
+  sandbox:
+    values:
+      - grafana:
+          enabled: {{ .Values | get "grafana.enabled" false }}
+
+repositories:
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+
+releases:
+  - name: grafana
+    chart: grafana/grafana
+    version: 6.48.0
+    namespace: grafana
+    condition: grafana.enabled
+    values:
+    - values/{{ .Environment.Name }}-value.yaml
+    - {{ .Values | get "grafana" dict | toYaml | indent 6 | trim}}
